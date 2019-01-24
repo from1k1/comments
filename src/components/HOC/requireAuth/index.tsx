@@ -5,7 +5,11 @@ interface IProps {
     history: Array<string>;
 }
 export const requireAuth = <WrappedProps extends IProps>(ChildComponent: React.ComponentType<WrappedProps>) => {
-    class ComposedComponent extends React.Component<WrappedProps,{}>{
+
+    class ComposedComponent extends React.Component<WrappedProps, {}>{
+        constructor(props: WrappedProps) {
+            super(props);
+        }
         componentDidMount() {
             this.accessHelper();
         }
@@ -18,14 +22,17 @@ export const requireAuth = <WrappedProps extends IProps>(ChildComponent: React.C
             }
         }
         render() {
-            const {...resProps} = this.props;
-            return (<ChildComponent {...resProps} />)
+            return (<ChildComponent {...this.props} />)
         }
+
     }
-    function mapStateToProps(state: IProps) {
-        return { 
+
+    function mapStateToProps(state: WrappedProps) {
+        return {
             auth: state.auth
         };
     }
+    
     return connect(mapStateToProps)(ComposedComponent);
+
 }
