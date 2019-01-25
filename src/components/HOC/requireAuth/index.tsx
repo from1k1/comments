@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-interface IProps {
+import { ICommentBoxProps } from '../../CommentBox';
+import * as actions from '../../../actions';
+interface IHOCProps extends ICommentBoxProps {
     auth: boolean;
-    history: Array<string>;
+    history: string[];
 }
-export const requireAuth = <WrappedProps extends IProps>(ChildComponent: React.ComponentType<WrappedProps>) => {
-
-    class ComposedComponent extends React.Component<WrappedProps, {}>{
-        constructor(props: WrappedProps) {
-            super(props);
-        }
+export const _requireAuth = <T extends Object, TState>(ChildComponent: React.ComponentType<T>) => {
+    class ComposedComponent extends React.Component<T & IHOCProps, TState>{
         componentDidMount() {
             this.accessHelper();
         }
@@ -20,6 +18,7 @@ export const requireAuth = <WrappedProps extends IProps>(ChildComponent: React.C
             if (!this.props.auth) {
                 this.props.history.push('/');
             }
+            console.log(this.props);
         }
         render() {
             return (<ChildComponent {...this.props} />)
@@ -27,12 +26,13 @@ export const requireAuth = <WrappedProps extends IProps>(ChildComponent: React.C
 
     }
 
-    function mapStateToProps(state: WrappedProps) {
-        return {
-            auth: state.auth
-        };
-    }
-    
-    return connect(mapStateToProps)(ComposedComponent);
+    return ComposedComponent;
 
 }
+function mapStateToProps(state: IHOCProps) {
+    return {
+        auth: state.auth,
+    };
+}
+
+export const requireAuth = (c: React.ComponentType<ICommentBoxProps>) => connect(mapStateToProps, actions)(_requireAuth(c))

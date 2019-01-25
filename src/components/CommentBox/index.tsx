@@ -1,17 +1,13 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import * as actions from '../../actions';
 import { requireAuth } from '../HOC/requireAuth';
-interface IState {
+export interface ICommentBoxState {
     comment: string;
 }
-interface IProps {
-    auth: boolean;
+export interface ICommentBoxProps {
     saveComment: (comment: string) => {};
     fetchComments: () => {};
-    history: Array<string>;
 }
-class CmntBox extends React.Component<IProps, IState>{
+class CmntBox extends React.Component<ICommentBoxProps, ICommentBoxState>{
     constructor(props: any) {
         super(props);
     }
@@ -45,4 +41,4 @@ class CmntBox extends React.Component<IProps, IState>{
     }
 }
 
-export const CommentBox = connect(null, actions)(requireAuth(CmntBox));
+export const CommentBox = requireAuth(CmntBox);
