@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { requireAuth } from '../HOC/requireAuth';
+import * as actions from '../../actions';
 export interface ICommentBoxState {
     comment: string;
 }
 export interface ICommentBoxProps {
-    saveComment: (comment: string) => {};
-    fetchComments: () => {};
+    saveComment: (comment: string) => Object;
+    fetchComments: () => Object;
 }
 class CmntBox extends React.Component<ICommentBoxProps, ICommentBoxState>{
-    constructor(props: any) {
+    constructor(props: ICommentBoxProps) {
         super(props);
     }
     state = {

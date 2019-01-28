@@ -18,7 +18,6 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             if (!this.props.auth) {
                 this.props.history.push('/');
             }
-            console.log(this.props);
         }
         render() {
             return (<ChildComponent {...this.props} />)

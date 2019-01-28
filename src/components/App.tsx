@@ -4,9 +4,10 @@ import { CommentList } from './CommentList';
 import { connect } from 'react-redux';
 import { Route, Link } from 'react-router-dom';
 import * as actions from '../actions';
+import { Dispatch } from 'redux';
 interface IProps {
     auth: boolean;
-    changeAuth: (isLoggedIn: boolean) => {};
+    changeAuth: (isLoggedIn: boolean) => Object;
 }
 class cApp extends React.Component<IProps, {}>{
     renderButton() {
@@ -46,4 +47,5 @@ class cApp extends React.Component<IProps, {}>{
 function mapStateToProps(state: IProps) {
     return { auth: state.auth };
 }
-export const App = connect(mapStateToProps,actions)(cApp);
+
+export const App = connect(mapStateToProps, actions)(cApp);
