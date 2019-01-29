@@ -27,6 +27,7 @@ class CmntBox extends React.Component<ICommentBoxProps, ICommentBoxState>{
         this.setState({ comment: '' });
     }
     public render() {
+        console.log (new actions._changeAuth(false));
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>

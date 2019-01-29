@@ -4,7 +4,7 @@ interface IResponse {
     comment: Array<string>,
     name: string
 }
-export class _saveComment {
+class _saveComment {
     readonly type = SAVE_COMMENT
     public payload: string
     constructor(payload: string) {
@@ -19,7 +19,7 @@ export class _saveComment {
         payload: ans.slice(1, 20).map(comment => comment.name)
     }
 */
-export class _fetchComments {
+class _fetchComments {
     readonly type = FETCH_COMMENTS
     public payload: Array<string> | Promise<string[]>
     async getData(): Promise<Array<IResponse>> {
