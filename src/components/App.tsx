@@ -13,13 +13,13 @@ class cApp extends React.Component<IProps, {}>{
     renderButton() {
         if (this.props.auth) {
             return (
-                <button onClick={() => this.props.changeAuth(false)} className="btn btn-light">
+                <button onClick={() => this.props.changeAuth(false)} className="btn peach-gradient btn-sm">
                     Sign Out
                 </button>
             );
         } else {
             return (
-                <button onClick={() => this.props.changeAuth(true)} className="btn btn-light">
+                <button onClick={() => this.props.changeAuth(true)} className="btn aqua-gradient btn-sm">
                     Sign In
                 </button>
 

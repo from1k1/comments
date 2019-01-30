@@ -34,10 +34,10 @@ class CmntBox extends React.Component<ICommentBoxProps, ICommentBoxState>{
                     <h2>Добавить комментарий</h2>
                     <textarea onChange={this.handleChange} value={this.state.comment} />
                     <div>
-                        <button type="submit">Отправить</button>
+                        <button className="btn btn-success btn-sm" type="submit">Отправить</button>
                     </div>
                 </form>
-                <button onClick={this.props.fetchComments}>Получить комменты</button>
+                <button className="btn btn-success btn-sm" onClick={this.props.fetchComments}>Получить комменты</button>
             </div>
         );
     }
