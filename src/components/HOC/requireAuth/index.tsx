@@ -2,7 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ICommentBoxProps } from '../../CommentBox';
 import * as actions from '../../../actions';
-interface IHOCProps extends ICommentBoxProps {
+import { IUserListProps } from '../../UserList';
+interface IHOCProps extends ICommentBoxProps,IUserListProps {
     auth: boolean;
     history: string[];
 }
@@ -34,4 +35,4 @@ function mapStateToProps(state: IHOCProps) {
     };
 }
 
-export const requireAuth = (c: React.ComponentType<ICommentBoxProps>) => connect(mapStateToProps, actions)(_requireAuth(c))
+export const requireAuth = (c: React.ComponentType<IUserListProps>) => connect(mapStateToProps, actions)(_requireAuth(c))
