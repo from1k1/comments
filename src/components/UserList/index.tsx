@@ -10,10 +10,12 @@ export interface IUserListProps {
 class _UserList extends React.Component<IUserListProps, {}>{
     constructor(props: IUserListProps) {
         super(props);
+        console.log("USER LIST PROPS: ",props);
         const { user } = this.props;
         if (user) {
             props.getUserList();
         }
+        console.log(props);
     }
     render() {
         return (
@@ -23,10 +25,10 @@ class _UserList extends React.Component<IUserListProps, {}>{
                 </div>
                 {this.props.user.map((user, key) => {
                     return (
-                        <div className="col-md-4" key={key}>
+                        <div className="col-md-4 my-2" key={key}>
                             <div className="white z-depth-2 rounded text-center p-3">
                                 <h4>{user.login}</h4>
-                                <img className="img-fluid" src={user.profile_pic} />
+                                <img className="img-fluid rounded-circle z-depth-1-half avatar-pic" style={{height:'200px'}} src={user.profile_pic} />
                             </div>
                         </div>
                     );

@@ -20,10 +20,10 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
                 this.props.history.push('/');
             }
         }
-        render() {
-            return (<ChildComponent {...this.props} />)
+        public render(){
+            console.log(this.props);
+            return (<ChildComponent {...this.props}/>);
         }
-
     }
 
     return ComposedComponent;
@@ -32,7 +32,8 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
 function mapStateToProps(state: IHOCProps) {
     return {
         auth: state.auth,
+        user: state.user
     };
 }
 
-export const requireAuth = (c: React.ComponentType<IUserListProps>) => connect(mapStateToProps, actions)(_requireAuth(c))
+export const requireAuth = (c: React.ComponentType<any>) => connect(mapStateToProps, actions)(_requireAuth(c))

@@ -3,3 +3,4 @@ export const FETCH_COMMENTS = 'FETCH_COMMENTS';
 export const CHANGE_AUTH = 'CHANGE_AUTH';
 export const GET_USER_LIST = 'GET_USER_LIST';
 export const SAVE_USER_LIST = 'SAVE_USER_LIST';
+export const GET_ACCESS_TOKEN = 'GET_ACCESS_TOKEN';

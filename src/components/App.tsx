@@ -8,19 +8,19 @@ import * as actions from '../actions';
 import { Dispatch } from 'redux';
 interface IProps {
     auth: boolean;
-    changeAuth: (isLoggedIn: boolean) => Object;
+    getAccessToken: () => Object;
 }
 class cApp extends React.Component<IProps, {}>{
     renderButton() {
         if (this.props.auth) {
             return (
-                <button onClick={() => this.props.changeAuth(false)} className="btn peach-gradient btn-sm">
+                <button onClick={() => this.props.getAccessToken()} className="btn peach-gradient btn-sm">
                     Sign Out
                 </button>
             );
         } else {
             return (
-                <button onClick={() => this.props.changeAuth(true)} className="btn aqua-gradient btn-sm">
+                <button onClick={() => this.props.getAccessToken()} className="btn aqua-gradient btn-sm">
                     Sign In
                 </button>
 
@@ -28,6 +28,7 @@ class cApp extends React.Component<IProps, {}>{
         }
     }
     public render() {
+        console.log(this.props);
         return (
             <div className="mt-3">
                 <header>
