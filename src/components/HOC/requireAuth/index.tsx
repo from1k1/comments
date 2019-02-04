@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { ICommentBoxProps } from '../../CommentBox';
 import * as actions from '../../../actions';
 import { IUserListProps } from '../../UserList';
-interface IHOCProps extends ICommentBoxProps,IUserListProps {
+interface IHOCProps extends ICommentBoxProps, IUserListProps {
     auth: boolean;
     history: string[];
+    verifyToken:()=>boolean;
 }
 export const _requireAuth = <T extends Object, TState>(ChildComponent: React.ComponentType<T>) => {
     class ComposedComponent extends React.Component<T & IHOCProps, TState>{
@@ -16,13 +17,15 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             this.accessHelper();
         }
         accessHelper() {
+            const verified = this.props.verifyToken();
+            console.log("Token verified:", this.props.verifyToken());
             if (!this.props.auth) {
                 this.props.history.push('/');
             }
         }
-        public render(){
+        public render() {
             console.log(this.props);
-            return (<ChildComponent {...this.props}/>);
+            return (<ChildComponent {...this.props} />);
         }
     }
 

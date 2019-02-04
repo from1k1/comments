@@ -1,4 +1,4 @@
-import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN } from './types';
+import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN } from './types';
 import axios from 'axios';
 import { User } from '../models/user';
 import * as qs from 'query-string';
@@ -94,10 +94,26 @@ class _getAccessToken {
         console.log(this.payload);
     }
 }
+class _verifyToken {
+    readonly type = VERIFY_TOKEN;
+    public payload: boolean | Promise<boolean>;
+    async verify(token: string | null) {
+        if (token) {
+            const verified = await axios.post("https://node.black-d.ga/verify", { token: token });
+            console.log("verified ili che? : ", verified);
+        }
+        return true;
+    }
+    constructor() {
+        const token = localStorage.getItem("UserTOKEN");
+        this.payload = this.verify(token);
+    }
+}
 export const changeAuth = (isLoggedIn: boolean) => { const { type, payload } = new _changeAuth(isLoggedIn); return { type, payload } };
 export const saveComment = (comment: string) => { const { type, payload } = new _saveComment(comment); return { type, payload } };
 export const fetchComments = () => { const { type, payload } = new _fetchComments(); return { type, payload } };
 export const getUserList = () => { const { type, payload } = new _getUserList(); return { type, payload } };
 export const saveUserList = (UserList: Array<User>) => { const { type, payload } = new _saveUserList(UserList); return { type, payload } };
 export const getAccessToken = () => { const { type, payload } = new _getAccessToken(); return { type, payload } };
-export type ActionTypes = _saveComment | _fetchComments | _changeAuth | _getUserList | _saveUserList | _getAccessToken;
+export const verifyToken = () => new _verifyToken();
+export type ActionTypes = _saveComment | _fetchComments | _changeAuth | _getUserList | _saveUserList | _getAccessToken | _verifyToken;
