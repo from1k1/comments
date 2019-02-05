@@ -22,14 +22,14 @@ class cApp extends React.Component<IProps, {}>{
     renderButton() {
         if (this.props.user === true) {
             return (
-                <button onClick={() => this.props.deleteToken()} className="btn peach-gradient btn-sm">
-                    Sign Out
+                <button onClick={this.props.deleteToken} className="btn peach-gradient btn-sm">
+                    Выйти
                 </button>
             );
         } else {
             return (
                 <button onClick={() => this.props.getAccessToken()} className="btn aqua-gradient btn-sm">
-                    Sign In
+                    Войти
                 </button>
 
             );

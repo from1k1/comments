@@ -63,22 +63,48 @@ class _getAccessToken {
     readonly type = GET_ACCESS_TOKEN;
     public payload: Promise<boolean> | boolean;
     async checkLoginWindowClose(window: Window) {
-        if (!window.closed) {
-            await setTimeout(() => this.checkLoginWindowClose(window), 100)
-            console.log("window check");
-            return;
-        } else {
-            console.log("WINDOW CLOSED");
-            const redirectUrl = localStorage.getItem("RequestURL");
-            if (redirectUrl) {
-                const params = qs.parse(redirectUrl);
-                console.log(params);
-                localStorage.setItem("UserID", params.id ? params.id.toString() : "");
-                localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
+        return new Promise<any>((resolve, reject) => {
+            const checkWindow = (loginWindow: Window) => {
+                if (!loginWindow.closed) {
+                    setTimeout(() => checkWindow(loginWindow), 100)
+                    return
+                }
+                const redirectUrl = localStorage.getItem("RequestURL");
+                if (typeof redirectUrl !== 'string' || redirectUrl.length === 0) {
+                    reject(
+                        new Error(
+                            `React Simple Auth: Login window was closed by the user or authentication was incomplete and never reached final redirect page.`
+                        )
+                    )
+                    return
+                }
+                if (redirectUrl) {
+                    const params = qs.parse(redirectUrl);
+                    console.log(params);
+                    localStorage.setItem("UserID", params.id ? params.id.toString() : "");
+                    localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
+                }
+                resolve(true);
             }
-            return true;
-        }
+
+            checkWindow(window)
+        })
     }
+    /*if(!window.closed) {
+        await setTimeout(() => this.checkLoginWindowClose(window), 100)
+        console.log("window check");
+        return;
+    } else {
+    console.log("WINDOW CLOSED");
+    const redirectUrl = localStorage.getItem("RequestURL");
+    if (redirectUrl) {
+        const params = qs.parse(redirectUrl);
+        console.log(params);
+        localStorage.setItem("UserID", params.id ? params.id.toString() : "");
+        localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
+    }
+    return true;*/
+
     constructor() {
         const loginWindow = window.open('https://node.black-d.ga/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 
@@ -130,6 +156,7 @@ class _deleteToken {
     constructor() {
         localStorage.clear();
         this.payload = false;
+
     }
 }
 export const changeAuth = (isLoggedIn: boolean) => new _changeAuth(isLoggedIn);
@@ -137,9 +164,9 @@ export const saveComment = (comment: string) => new _saveComment(comment);
 export const fetchComments = () => new _fetchComments();
 export const getUserList = () => new _getUserList();
 export const saveUserList = (UserList: Array<User>) => new _saveUserList(UserList);
-export const getAccessToken = () => new _getAccessToken();
+export const getAccessToken = () => Object.assign({}, new _getAccessToken());
 export const verifyToken = () => new _verifyToken();
-export const deleteToken = () => new _deleteToken();
+export const deleteToken = () => Object.assign({}, new _deleteToken());
 export type ActionTypes =
     _deleteToken |
     _saveComment |
