@@ -7,14 +7,22 @@ import { UserList } from '../components/UserList';
 import * as actions from '../actions';
 import { Dispatch } from 'redux';
 interface IProps {
-    auth: boolean;
+    user: boolean;
     getAccessToken: () => Object;
+    verifyToken: () => Object;
+    deleteToken: () => Object;
 }
 class cApp extends React.Component<IProps, {}>{
+    componentDidMount() {
+        const authToken = localStorage.getItem("UserTOKEN");
+        if (authToken) {
+            this.props.verifyToken();
+        }
+    }
     renderButton() {
-        if (this.props.auth) {
+        if (this.props.user === true) {
             return (
-                <button onClick={() => this.props.getAccessToken()} className="btn peach-gradient btn-sm">
+                <button onClick={() => this.props.deleteToken()} className="btn peach-gradient btn-sm">
                     Sign Out
                 </button>
             );
@@ -28,7 +36,7 @@ class cApp extends React.Component<IProps, {}>{
         }
     }
     public render() {
-        console.log(this.props);
+        console.log("APP PROPS:", this.props);
         return (
             <div className="mt-3">
                 <header>
@@ -49,7 +57,9 @@ class cApp extends React.Component<IProps, {}>{
     }
 }
 function mapStateToProps(state: IProps) {
-    return { auth: state.auth };
+    console.log("FCKING STATE:", state)
+    return ({
+        user: state.user
+    });
 }
-
 export const App = connect(mapStateToProps, actions)(cApp);

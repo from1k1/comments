@@ -1,4 +1,4 @@
-import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN } from './types';
+import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN, DELETE_ACCESS_TOKEN } from './types';
 import axios from 'axios';
 import { User } from '../models/user';
 import * as qs from 'query-string';
@@ -43,7 +43,8 @@ class _getUserList {
     public payload: Array<User> | Promise<Array<User>>;
     async getUserList(): Promise<Array<User>> {
         const r = await axios.get('https://node.black-d.ga/userlist');
-        return r.data;
+        console.log(JSON.stringify(r.data.data));
+        return r.data.data;
     }
     constructor() {
         const data = this.getUserList().then(val => val);
@@ -60,60 +61,91 @@ class _saveUserList {
 }
 class _getAccessToken {
     readonly type = GET_ACCESS_TOKEN;
-    public payload: boolean;
+    public payload: Promise<boolean> | boolean;
     async checkLoginWindowClose(window: Window) {
-        console.log("CHECKING WINDOWS");
         if (!window.closed) {
-            setTimeout(() => this.checkLoginWindowClose(window), 100)
-            return
+            await setTimeout(() => this.checkLoginWindowClose(window), 100)
+            console.log("window check");
+            return;
         } else {
+            console.log("WINDOW CLOSED");
             const redirectUrl = localStorage.getItem("RequestURL");
             if (redirectUrl) {
                 const params = qs.parse(redirectUrl);
                 console.log(params);
                 localStorage.setItem("UserID", params.id ? params.id.toString() : "");
                 localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
-
             }
+            return true;
         }
     }
     constructor() {
-        if (localStorage.getItem("access_token") === undefined || 1 === 1) {
-            console.log("TEST1");
-            const loginWindow = window.open('https://node.black-d.ga/signup', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+        const loginWindow = window.open('https://node.black-d.ga/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 
-            if (loginWindow) {
-                this.checkLoginWindowClose(loginWindow);
-                this.payload = true;
-            } else {
-                this.payload = false;
-            }
+        if (loginWindow) {
+            const realshit = async () => await this.checkLoginWindowClose(loginWindow).then(res => {
+                console.log("Окно закрылось тупа, ненавижу асинхронщину (обожаю)");
+                const authToken = localStorage.getItem("UserTOKEN");
+                if (authToken) {
+                    return new _verifyToken().verify().then(result => result);
+                } else {
+                    return false
+                }
+            });
+            this.payload = realshit().then(res => res);
         } else {
+            console.log("Че мы тут делаем?");
             this.payload = false;
         }
-        console.log(this.payload);
     }
 }
 class _verifyToken {
     readonly type = VERIFY_TOKEN;
     public payload: boolean | Promise<boolean>;
-    async verify(token: string | null) {
+    public async verify() {
+        console.log("Че занах?");
+        const token = localStorage.getItem("UserTOKEN");
         if (token) {
-            const verified = await axios.post("https://node.black-d.ga/verify", { token: token });
+            axios.defaults.headers['Authorization'] = token;
+            console.log(axios.defaults.headers['Authorization']);
+            const verified = await axios.get("https://node.black-d.ga/verify");
             console.log("verified ili che? : ", verified);
+            if (verified.data.success === true) {
+                console.log("Token real good");
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
-        return true;
     }
     constructor() {
-        const token = localStorage.getItem("UserTOKEN");
-        this.payload = this.verify(token);
+        this.payload = this.verify();
     }
 }
-export const changeAuth = (isLoggedIn: boolean) => { const { type, payload } = new _changeAuth(isLoggedIn); return { type, payload } };
-export const saveComment = (comment: string) => { const { type, payload } = new _saveComment(comment); return { type, payload } };
-export const fetchComments = () => { const { type, payload } = new _fetchComments(); return { type, payload } };
-export const getUserList = () => { const { type, payload } = new _getUserList(); return { type, payload } };
-export const saveUserList = (UserList: Array<User>) => { const { type, payload } = new _saveUserList(UserList); return { type, payload } };
-export const getAccessToken = () => { const { type, payload } = new _getAccessToken(); return { type, payload } };
+class _deleteToken {
+    readonly type = DELETE_ACCESS_TOKEN;
+    public payload: boolean;
+    constructor() {
+        localStorage.clear();
+        this.payload = false;
+    }
+}
+export const changeAuth = (isLoggedIn: boolean) => new _changeAuth(isLoggedIn);
+export const saveComment = (comment: string) => new _saveComment(comment);
+export const fetchComments = () => new _fetchComments();
+export const getUserList = () => new _getUserList();
+export const saveUserList = (UserList: Array<User>) => new _saveUserList(UserList);
+export const getAccessToken = () => new _getAccessToken();
 export const verifyToken = () => new _verifyToken();
-export type ActionTypes = _saveComment | _fetchComments | _changeAuth | _getUserList | _saveUserList | _getAccessToken | _verifyToken;
+export const deleteToken = () => new _deleteToken();
+export type ActionTypes =
+    _deleteToken |
+    _saveComment |
+    _fetchComments |
+    _changeAuth |
+    _getUserList |
+    _saveUserList |
+    _getAccessToken |
+    _verifyToken;

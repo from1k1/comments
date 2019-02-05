@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import { ICommentBoxProps } from '../../CommentBox';
 import * as actions from '../../../actions';
 import { IUserListProps } from '../../UserList';
+import * as axios from 'axios';
 interface IHOCProps extends ICommentBoxProps, IUserListProps {
-    auth: boolean;
+    user: boolean;
     history: string[];
-    verifyToken:()=>boolean;
+    getAccessToken: () => Object;
+    verifyToken: () => boolean;
 }
 export const _requireAuth = <T extends Object, TState>(ChildComponent: React.ComponentType<T>) => {
     class ComposedComponent extends React.Component<T & IHOCProps, TState>{
@@ -16,15 +18,18 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
         componentDidUpdate() {
             this.accessHelper();
         }
-        accessHelper() {
-            const verified = this.props.verifyToken();
-            console.log("Token verified:", this.props.verifyToken());
-            if (!this.props.auth) {
-                this.props.history.push('/');
+        async accessHelper() {
+            const authToken = localStorage.getItem("UserTOKEN");
+            console.log("HOC PROPS:",this.props);
+            if (this.props.user) {
+                this.props.verifyToken();
+            } else {
+                this.props.history.push("/");
+                await this.props.getAccessToken();
             }
         }
         public render() {
-            console.log(this.props);
+            console.log("END AUTH PROPS:", this.props);
             return (<ChildComponent {...this.props} />);
         }
     }
@@ -33,9 +38,10 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
 
 }
 function mapStateToProps(state: IHOCProps) {
+    console.log(state);
     return {
-        auth: state.auth,
-        user: state.user
+        user: state.user,
+        userlist: state.userlist
     };
 }
 
