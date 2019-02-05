@@ -71,11 +71,7 @@ class _getAccessToken {
                 }
                 const redirectUrl = localStorage.getItem("RequestURL");
                 if (typeof redirectUrl !== 'string' || redirectUrl.length === 0) {
-                    reject(
-                        new Error(
-                            `React Simple Auth: Login window was closed by the user or authentication was incomplete and never reached final redirect page.`
-                        )
-                    )
+                    alert("Вы не авторизованы, внатуре!");
                     return
                 }
                 if (redirectUrl) {
