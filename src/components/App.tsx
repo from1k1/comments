@@ -6,6 +6,7 @@ import { Route, Link } from 'react-router-dom';
 import { UserList } from '../components/UserList';
 import * as actions from '../actions';
 import { Dispatch } from 'redux';
+import { UserInfo } from './UserInfo';
 interface IProps {
     user: boolean;
     getAccessToken: () => Object;
@@ -13,11 +14,9 @@ interface IProps {
     deleteToken: () => Object;
 }
 class cApp extends React.Component<IProps, {}>{
-    componentDidMount() {
-        const authToken = localStorage.getItem("UserTOKEN");
-        if (authToken) {
-            this.props.verifyToken();
-        }
+    componentDidMount(){
+        this.props.verifyToken();
+        console.log("Token verified in APP");
     }
     renderButton() {
         if (this.props.user === true) {
@@ -44,11 +43,13 @@ class cApp extends React.Component<IProps, {}>{
                         <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/post">Оставить комментарий</Link></li>
                         <li className="nav-item"><Link className="nav-link" to="/userlist">Список пользователей</Link></li>
+                        <li className="nav-item"><Link className="nav-link" to="/me">Профиль</Link></li>
                         <li className="nav-item">{this.renderButton()}</li>
                     </ul>
                 </header>
                 <div>
                     <Route path="/post" component={CommentBox} />
+                    <Route path="/me" component={UserInfo} />
                     <Route path="/userlist" component={UserList} />
                     <Route path="/" exact component={CommentList} />
                 </div>

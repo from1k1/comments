@@ -1,10 +1,16 @@
-import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN, DELETE_ACCESS_TOKEN } from './types';
+import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN, DELETE_ACCESS_TOKEN, GET_USER_INFO } from './types';
 import axios from 'axios';
 import { User } from '../models/user';
 import * as qs from 'query-string';
 interface IResponse {
     comment: Array<string>,
     name: string
+}
+interface IUser{
+    login:string;
+    password:string;
+    profile_pic:string;
+    id:number
 }
 class _saveComment {
     readonly type = SAVE_COMMENT
@@ -26,7 +32,6 @@ class _fetchComments {
             return value.slice(1, 40).map(comment => comment.name);
         });
         this.payload = data.then();
-        console.log(this.payload);
     }
 }
 
@@ -43,13 +48,11 @@ class _getUserList {
     public payload: Array<User> | Promise<Array<User>>;
     async getUserList(): Promise<Array<User>> {
         const r = await axios.get('https://node.black-d.ga/userlist');
-        console.log(JSON.stringify(r.data.data));
         return r.data.data;
     }
     constructor() {
         const data = this.getUserList().then(val => val);
         this.payload = data.then();
-        console.log(this.payload);
     }
 }
 class _saveUserList {
@@ -77,7 +80,6 @@ class _getAccessToken {
                 }
                 if (redirectUrl) {
                     const params = qs.parse(redirectUrl);
-                    console.log(params);
                     localStorage.setItem("UserID", params.id ? params.id.toString() : "");
                     localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
                     if (localStorage.getItem("UserTOKEN")==="nothing"){
@@ -106,7 +108,6 @@ class _getAccessToken {
             });
             this.payload = realshit().then(res => res);
         } else {
-            console.log("Че мы тут делаем?");
             this.payload = false;
         }
     }
@@ -115,15 +116,11 @@ class _verifyToken {
     readonly type = VERIFY_TOKEN;
     public payload: boolean | Promise<boolean>;
     public async verify() {
-        console.log("Че занах?");
         const token = localStorage.getItem("UserTOKEN");
         if (token) {
             axios.defaults.headers['Authorization'] = token;
-            console.log(axios.defaults.headers['Authorization']);
             const verified = await axios.get("https://node.black-d.ga/verify");
-            console.log("verified ili che? : ", verified);
             if (verified.data.success === true) {
-                console.log("Token real good");
                 return true;
             } else {
                 return false;
@@ -133,7 +130,7 @@ class _verifyToken {
         }
     }
     constructor() {
-        this.payload = this.verify();
+        this.payload = this.verify().then(result=>result);
     }
 }
 class _deleteToken {
@@ -145,6 +142,18 @@ class _deleteToken {
 
     }
 }
+class _getUserInfo {
+    readonly type = GET_USER_INFO;
+    public payload: IUser | Promise<IUser>;
+    async getInfo(){
+        const info = await axios.get('https://node.black-d.ga/me');
+        return info.data;
+    }
+    constructor(){
+        const data = this.getInfo().then(val => val);
+        this.payload = data.then();
+    }
+}
 export const changeAuth = (isLoggedIn: boolean) => new _changeAuth(isLoggedIn);
 export const saveComment = (comment: string) => new _saveComment(comment);
 export const fetchComments = () => new _fetchComments();
@@ -153,6 +162,7 @@ export const saveUserList = (UserList: Array<User>) => new _saveUserList(UserLis
 export const getAccessToken = () => Object.assign({}, new _getAccessToken());
 export const verifyToken = () => new _verifyToken();
 export const deleteToken = () => Object.assign({}, new _deleteToken());
+export const getUserInfo = () => Object.assign({}, new _getUserInfo());
 export type ActionTypes =
     _deleteToken |
     _saveComment |
@@ -161,4 +171,5 @@ export type ActionTypes =
     _getUserList |
     _saveUserList |
     _getAccessToken |
-    _verifyToken;
+    _verifyToken|
+    _getUserInfo;

@@ -6,3 +6,4 @@ export const SAVE_USER_LIST = 'SAVE_USER_LIST';
 export const GET_ACCESS_TOKEN = 'GET_ACCESS_TOKEN';
 export const VERIFY_TOKEN = 'VERIFY_TOKEN';
 export const DELETE_ACCESS_TOKEN = 'DELETE_TOKEN';
+export const GET_USER_INFO = 'GET_USER_INFO'

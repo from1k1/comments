@@ -2,9 +2,7 @@ import { Middleware } from 'redux';
 import { ActionTypes } from '../../actions';
 import { AxiosResponse } from 'axios';
 export const asyncMiddleware: Middleware<ActionTypes> = ({ dispatch }) => next => (action) => {
-    console.log("MIDDLEWARE:", action);
     if (!action.payload || !action.payload.then) {
-        console.log("BEFORE NEX ACTION:",action);
         return next(action);
     }
     action.payload.then((response: any) => {
