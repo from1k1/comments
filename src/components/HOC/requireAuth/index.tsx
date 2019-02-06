@@ -19,7 +19,6 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             this.accessHelper();
         }
         async accessHelper() {
-            const authToken = localStorage.getItem("UserTOKEN");
             console.log("HOC PROPS:",this.props);
             if (this.props.user) {
                 this.props.verifyToken();

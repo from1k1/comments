@@ -70,6 +70,7 @@ class _getAccessToken {
                     return
                 }
                 const redirectUrl = localStorage.getItem("RequestURL");
+                localStorage.removeItem("RequestURL");
                 if (typeof redirectUrl !== 'string' || redirectUrl.length === 0) {
                     alert("Вы не авторизованы, внатуре!");
                     return
@@ -79,6 +80,10 @@ class _getAccessToken {
                     console.log(params);
                     localStorage.setItem("UserID", params.id ? params.id.toString() : "");
                     localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
+                    if (localStorage.getItem("UserTOKEN")==="nothing"){
+                        alert("Вы не авторизованы, внатуре!");
+                        return
+                    }
                 }
                 resolve(true);
             }
@@ -86,27 +91,12 @@ class _getAccessToken {
             checkWindow(window)
         })
     }
-    /*if(!window.closed) {
-        await setTimeout(() => this.checkLoginWindowClose(window), 100)
-        console.log("window check");
-        return;
-    } else {
-    console.log("WINDOW CLOSED");
-    const redirectUrl = localStorage.getItem("RequestURL");
-    if (redirectUrl) {
-        const params = qs.parse(redirectUrl);
-        console.log(params);
-        localStorage.setItem("UserID", params.id ? params.id.toString() : "");
-        localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
-    }
-    return true;*/
-
+    
     constructor() {
         const loginWindow = window.open('https://node.black-d.ga/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 
         if (loginWindow) {
             const realshit = async () => await this.checkLoginWindowClose(loginWindow).then(res => {
-                console.log("Окно закрылось тупа, ненавижу асинхронщину (обожаю)");
                 const authToken = localStorage.getItem("UserTOKEN");
                 if (authToken) {
                     return new _verifyToken().verify().then(result => result);
