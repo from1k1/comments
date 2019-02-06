@@ -19,7 +19,7 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             this.accessHelper();
         }
         async accessHelper() {
-            console.log("HOC PROPS:",this.props);
+            console.log("HOC PROPS:", this.props);
             if (this.props.user) {
                 this.props.verifyToken();
             } else {
@@ -28,8 +28,12 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             }
         }
         public render() {
-            console.log("END AUTH PROPS:", this.props);
-            return (<ChildComponent {...this.props} />);
+            if (this.props.user) {
+                console.log("END AUTH PROPS:", this.props);
+                return (<ChildComponent {...this.props} />);
+            } else {
+                return (<h1>Error</h1>)
+            }
         }
     }
 
