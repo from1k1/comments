@@ -47,8 +47,9 @@ class _getUserList {
     readonly type = GET_USER_LIST;
     public payload: Array<User> | Promise<Array<User>>;
     async getUserList(): Promise<Array<User>> {
-        const r = await axios.get('https://node.black-d.ga/userlist');
-        return r.data.data;
+        const r = await axios.get('http://localhost:1337/userlist');
+		console.log(r);
+        return r.data;
     }
     constructor() {
         const data = this.getUserList().then(val => val);
@@ -95,7 +96,7 @@ class _getAccessToken {
     }
     
     constructor() {
-        const loginWindow = window.open('https://node.black-d.ga/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+        const loginWindow = window.open('http://localhost:1337/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 
         if (loginWindow) {
             const realshit = async () => await this.checkLoginWindowClose(loginWindow).then(res => {
@@ -119,7 +120,7 @@ class _verifyToken {
         const token = localStorage.getItem("UserTOKEN");
         if (token) {
             axios.defaults.headers['Authorization'] = token;
-            const verified = await axios.get("https://node.black-d.ga/verify");
+            const verified = await axios.get("http://localhost:1337/verify");
             if (verified.data.success === true) {
                 return true;
             } else {
@@ -146,7 +147,7 @@ class _getUserInfo {
     readonly type = GET_USER_INFO;
     public payload: IUser | Promise<IUser>;
     async getInfo(){
-        const info = await axios.get('https://node.black-d.ga/me');
+        const info = await axios.get('http://localhost:1337/me');
         return info.data;
     }
     constructor(){

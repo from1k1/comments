@@ -14,7 +14,7 @@ interface IProps {
     deleteToken: () => Object;
 }
 class cApp extends React.Component<IProps, {}>{
-    componentDidMount(){
+    componentWillMount(){
         this.props.verifyToken();
         console.log("Token verified in APP");
     }

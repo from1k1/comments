@@ -5,7 +5,7 @@ interface IUser {
     login: string;
     password: string;
     profile_pic: string;
-    id: number
+    id: string;
 }
 interface IProps{
     userinfo: IUser,
@@ -17,8 +17,10 @@ const _UserInfo: React.SFC<IProps> = (props) => {
         props.getUserInfo();
     }
     return ( 
-        <div className="col-md-6 offset-md-3 grey text-center z-depth-3">
-            <h1>{props.userinfo.login}</h1><br/>
+        <div className="col-md-6 offset-md-3 p-5 grey text-center z-depth-3">
+            <h4 className="mt-2 white-text">{props.userinfo.login}</h4>
+			<p className="white-text">id: {props.userinfo.id}</p>
+			<br/>
             <img src={props.userinfo.profile_pic}/>
         </div>
     )
