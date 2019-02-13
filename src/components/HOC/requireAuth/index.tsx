@@ -16,6 +16,7 @@ interface IHOCProps extends ICommentBoxProps, IUserListProps {
     getAccessToken: () => Object;
     verifyToken: () => boolean;
     userinfo: IUser;
+    messages: Array<string>;
 }
 export const _requireAuth = <T extends Object, TState>(ChildComponent: React.ComponentType<T>) => {
     class ComposedComponent extends React.Component<T & IHOCProps, TState>{
@@ -26,7 +27,7 @@ export const _requireAuth = <T extends Object, TState>(ChildComponent: React.Com
             this.accessHelper();
         }
         async accessHelper() {
-            if (!this.props.user && (localStorage.getItem("UserTOKEN")===undefined)) {
+            if (!this.props.user && (localStorage.getItem("UserTOKEN") === undefined)) {
                 this.props.getAccessToken();
             } else {
                 this.props.verifyToken();
@@ -48,7 +49,8 @@ function mapStateToProps(state: IHOCProps) {
     return {
         user: state.user,
         userlist: state.userlist,
-        userinfo: state.userinfo
+        userinfo: state.userinfo,
+        messages: state.messages
     };
 }
 

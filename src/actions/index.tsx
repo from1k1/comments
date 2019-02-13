@@ -1,4 +1,4 @@
-import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN, DELETE_ACCESS_TOKEN, GET_USER_INFO } from './types';
+import { FETCH_COMMENTS, SAVE_COMMENT, CHANGE_AUTH, GET_USER_LIST, SAVE_USER_LIST, GET_ACCESS_TOKEN, VERIFY_TOKEN, DELETE_ACCESS_TOKEN, GET_USER_INFO, RECEIVE_MESSAGE } from './types';
 import axios from 'axios';
 import { User } from '../models/user';
 import * as qs from 'query-string';
@@ -6,11 +6,11 @@ interface IResponse {
     comment: Array<string>,
     name: string
 }
-interface IUser{
-    login:string;
-    password:string;
-    profile_pic:string;
-    id:number
+interface IUser {
+    login: string;
+    password: string;
+    profile_pic: string;
+    id: number
 }
 class _saveComment {
     readonly type = SAVE_COMMENT
@@ -48,7 +48,7 @@ class _getUserList {
     public payload: Array<User> | Promise<Array<User>>;
     async getUserList(): Promise<Array<User>> {
         const r = await axios.get('http://localhost:1337/userlist');
-		console.log(r);
+        console.log(r);
         return r.data;
     }
     constructor() {
@@ -83,7 +83,7 @@ class _getAccessToken {
                     const params = qs.parse(redirectUrl);
                     localStorage.setItem("UserID", params.id ? params.id.toString() : "");
                     localStorage.setItem("UserTOKEN", params.token ? params.token.toString() : "");
-                    if (localStorage.getItem("UserTOKEN")==="nothing"){
+                    if (localStorage.getItem("UserTOKEN") === "nothing") {
                         alert("Вы не авторизованы, внатуре!");
                         return
                     }
@@ -94,7 +94,7 @@ class _getAccessToken {
             checkWindow(window)
         })
     }
-    
+
     constructor() {
         const loginWindow = window.open('http://localhost:1337/', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 
@@ -131,7 +131,7 @@ class _verifyToken {
         }
     }
     constructor() {
-        this.payload = this.verify().then(result=>result);
+        this.payload = this.verify().then(result => result);
     }
 }
 class _deleteToken {
@@ -146,13 +146,20 @@ class _deleteToken {
 class _getUserInfo {
     readonly type = GET_USER_INFO;
     public payload: IUser | Promise<IUser>;
-    async getInfo(){
+    async getInfo() {
         const info = await axios.get('http://localhost:1337/me');
         return info.data;
     }
-    constructor(){
+    constructor() {
         const data = this.getInfo().then(val => val);
         this.payload = data.then();
+    }
+}
+class _receiveMessage {
+    readonly type = RECEIVE_MESSAGE;
+    public payload: string;
+    constructor(message: string) {
+        this.payload = message;
     }
 }
 export const changeAuth = (isLoggedIn: boolean) => new _changeAuth(isLoggedIn);
@@ -164,6 +171,7 @@ export const getAccessToken = () => Object.assign({}, new _getAccessToken());
 export const verifyToken = () => new _verifyToken();
 export const deleteToken = () => Object.assign({}, new _deleteToken());
 export const getUserInfo = () => Object.assign({}, new _getUserInfo());
+export const receiveMessage = (message: string) => Object.assign({}, new _receiveMessage(message));
 export type ActionTypes =
     _deleteToken |
     _saveComment |
@@ -172,5 +180,6 @@ export type ActionTypes =
     _getUserList |
     _saveUserList |
     _getAccessToken |
-    _verifyToken|
-    _getUserInfo;
+    _verifyToken |
+    _getUserInfo |
+    _receiveMessage;

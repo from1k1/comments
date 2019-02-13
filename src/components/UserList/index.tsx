@@ -38,8 +38,4 @@ class _UserList extends React.Component<IUserListProps, {}>{
 
     }
 }
-function mapStateToProps(state: IUserListProps) {
-    console.log(state);
-    return { userlist: state.userlist };
-}
 export const UserList = requireAuth(_UserList);
